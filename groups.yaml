@@ -1,0 +1,42 @@
+---
+defaults: {}
+  # username: admin
+  # password: <password>
+
+cisco-ios:
+  platform: cisco_ios
+  img: c2960x-universalk9-mz.152-4.E6.bin  ### MD5 152-4.E6::: "397144b2e312e9ab9664ccdb4ca09ddc"
+  # img: c2960x-universalk9-mz.152-4.E5.bin  ### MD5 152-4.E5::: "aff66a84c4214fbcc6e36d165b06d03e"
+  # img: c2960x-universalk9-mz.152-2.E4/c2960x-universalk9-mz.152-2.E4.bin  ### MD5 152-2.E4::: "1b8c44016d42e70d5ba3d9e909753c5b" 
+  # img: c2960x-universalk9-mz.152-2.E4.bin  ### MD5 152-2.E4::: "1b8c44016d42e70d5ba3d9e909753c5b" 
+
+  # # # img: newtestfile.txt   ### MD5 newtestfile.txt :::: d94c10e437d18531e122ed0b45badd2a
+
+
+  
+  # backup_img: c2960x-universalk9-mz.152-4.E6.bin  ### MD5 152-4.E6:::  "397144b2e312e9ab9664ccdb4ca09ddc"
+  backup_img: c2960x-universalk9-mz.152-4.E5.bin    ### MD5::: "aff66a84c4214fbcc6e36d165b06d03e"
+  # backup_img: c2960x-universalk9-mz.152-2.E4/c2960x-universalk9-mz.152-2.E4.bin  ### MD5 152-2.E4::: "1b8c44016d42e70d5ba3d9e909753c5b" 
+  # backup_img: c2960x-universalk9-mz.152-2.E4.bin  ### MD5 152-2.E4::: "1b8c44016d42e70d5ba3d9e909753c5b" 
+  # backup_img: newtestfile.txt  ### MD5 newtestfile.txt :::: d94c10e437d18531e122ed0b45badd2a
+
+
+# boot system flash:{file}
+# boot system flash:c2960x-universalk9-mz.152-4.E5.bin
+# boot system flash:c2960x-universalk9-mz.152-4.E6.bin
+
+
+# version - c2960x-universalk9-mz.152-4.E5: "15.2(4)E6"
+# version - c2960x-universalk9-mz.152-4.E5: "15.2(4)E5"
+# version - c2960x-universalk9-mz.152-2.E4: "15.2(2)E4"
+
+#  tar-version_md5  "97144b2e312e9ab9664ccdb4ca09ddc
+
+
+# arista:
+#   platform: arista_eos
+#   img: test_arista.txt
+
+# nxos:
+#   platform: cisco_nxos
+#   img: test_nxos.txt

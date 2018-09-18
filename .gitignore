@@ -1,0 +1,5 @@
+*.bin
+*.tar
+*.txt
+nornir/*
+__pycache__/*

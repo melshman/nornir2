@@ -1,0 +1,9 @@
+---
+# Don't log by default
+logging_file: ""
+
+# num_workers: 100
+# inventory: nornir.plugins.inventory.simple.SimpleInventory
+# SimpleInventory:
+#     host_file: "inventory/hosts.yaml"
+#     group_file: "inventory/groups.yaml"
