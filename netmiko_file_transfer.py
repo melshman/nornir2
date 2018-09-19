@@ -28,6 +28,82 @@ def os_upgrade(task):
     return ''
 
 
+def set_boot_var(task):
+    """
+    Set the boot variable for Cisco IOS.
+    return True if boot variable set
+    return False if staging verification steps failed (i.e. before the boot variable was set).
+    """
+    primary_img = task.host.get('img')
+    backup_img = task.host.get('backup_img')
+
+    # Check images are on the device
+    ### CHANGED TO ONLY DO PRIMARY IMAGE IN COMMAND STRING
+    for img in (primary_img, backup_img): #, backup_img  ### removed backup_img
+    	# had to take into account the fact that the current running image is installed
+    	# in a subdirectory
+        # file_only = img.split('/')
+        # if len(file_only) == 1:
+        # 	continue
+        # else:
+        # 	file_only = file_only[1]
+        result = task.run(
+            netmiko_send_command,
+            command_string=f"dir flash:/{img}"
+        )
+        ## DEBUG ##
+        # print(f"This is result[0] after checking flash", result[0])
+        
+        ## DEBUG ##
+        print(f"This is result:", result)
+        print("\n")       
+        print(f"This is result[0]:", result[0])
+        print("\n")
+        print(f"This is result[0].result:", result[0].result)
+        print("\n")
+
+        output = result[0].result
+        
+
+        
+
+        # Drop the first line as that line always contains the filename
+        output = re.split(r"Directory of.*", output, flags=re.M)[1]
+        # if file_only not in output:
+        if img not in output:
+            print("The image was not found on the device directory.")
+            return False
+
+        ## DEBUG ##
+        print(f"This is output for", img, " after regex", output)
+        print("\n")
+
+
+    commands = f"""
+default boot system
+boot system flash:{primary_img};flash:{backup_img}
+"""
+
+## removed from commadns and replaced with above single statement
+# boot system flash {primary_img}
+# boot system flash {backup_img}
+
+
+
+    command_list = commands.strip().splitlines()
+    output = task.run(
+        netmiko_send_config,
+        config_commands=command_list
+    )
+    
+    ## DEBUG ##
+    print(f"This is the command list", command_list)
+    print("\n")
+    print(f"This is output from send config", output)
+    print("\n")
+    return True
+
+
 # def set_boot_var(task):
 #     """
 #     Set the boot variable for Cisco IOS.
@@ -38,45 +114,35 @@ def os_upgrade(task):
 #     backup_img = task.host.get('backup_img')
 
 #     # Check images are on the device
-#     ### CHANGED TO ONLY DO PRIMARY IMAGE IN COMMAND STRING
-#     for img in (primary_img, backup_img): #, backup_img  ### removed backup_img
-#     	# had to take into account the fact that the current running image is installed
-#     	# in a subdirectory
-#         # file_only = img.split('/')
-#         # if len(file_only) == 1:
-#         # 	continue
-#         # else:
-#         # 	file_only = file_only[1]
-#         result = task.run(
-#             netmiko_send_command,
-#             command_string=f"dir flash:/{img}"
-#         )
-#         ## DEBUG ##
-#         # print(f"This is result[0] after checking flash", result[0])
-        
-#         ## DEBUG ##
-#         print(f"This is result:", result)
-#         print("\n")       
-#         print(f"This is result[0]:", result[0])
-#         print("\n")
-#         print(f"This is result[0].result:", result[0].result)
-#         print("\n")
 
-#         output = result[0].result
-        
+#     result = task.run(
+#         netmiko_send_command,
+#         command_string=f"dir flash:/{primary_img}"
+#     )
+#     ## DEBUG ##
+#     # print(f"This is result[0] after checking flash", result[0])
+    
+#     ## DEBUG ##
+#     print(f"This is result:", result)
+#     print("\n")       
+#     print(f"This is result[0]:", result[0])
+#     print("\n")
+#     print(f"This is result[0].result:", result[0].result)
+#     print("\n")
 
-        
+#     output = result[0].result
+    
 
 #         # Drop the first line as that line always contains the filename
-#         output = re.split(r"Directory of.*", output, flags=re.M)[1]
-#         # if file_only not in output:
-#         if img not in output:
-#             print("The image was not found on the device directory.")
-#             return False
+#     output = re.split(r"Directory of.*", output, flags=re.M)[1]
+#     # if file_only not in output:
+#     if primary_img not in output:
+#         print("The image was not found on the device directory.")
+#         return False
 
-#         ## DEBUG ##
-#         print(f"This is output for", img, " after regex", output)
-#         print("\n")
+#     ## DEBUG ##
+#     print(f"This is output for", primary_img, " after regex", output)
+#     print("\n")
 
 
 #     commands = f"""
@@ -90,74 +156,13 @@ def os_upgrade(task):
 #         netmiko_send_config,
 #         config_commands=command_list
 #     )
-    
-#     ## DEBUG ##
+
+# 	## DEBUG ##
 #     print(f"This is the command list", command_list)
 #     print("\n")
 #     print(f"This is output from send config", output)
 #     print("\n")
 #     return True
-
-
-def set_boot_var(task):
-    """
-    Set the boot variable for Cisco IOS.
-    return True if boot variable set
-    return False if staging verification steps failed (i.e. before the boot variable was set).
-    """
-    primary_img = task.host.get('img')
-    backup_img = task.host.get('backup_img')
-
-    # Check images are on the device
-
-    result = task.run(
-        netmiko_send_command,
-        command_string=f"dir flash:/{primary_img}"
-    )
-    ## DEBUG ##
-    # print(f"This is result[0] after checking flash", result[0])
-    
-    ## DEBUG ##
-    print(f"This is result:", result)
-    print("\n")       
-    print(f"This is result[0]:", result[0])
-    print("\n")
-    print(f"This is result[0].result:", result[0].result)
-    print("\n")
-
-    output = result[0].result
-    
-
-        # Drop the first line as that line always contains the filename
-    output = re.split(r"Directory of.*", output, flags=re.M)[1]
-    # if file_only not in output:
-    if primary_img not in output:
-        print("The image was not found on the device directory.")
-        return False
-
-    ## DEBUG ##
-    print(f"This is output for", primary_img, " after regex", output)
-    print("\n")
-
-
-    commands = f"""
-default boot system
-boot system flash {primary_img}
-"""
-### REMOVED THIS FROM COMMANDS::::   boot system flash {backup_img}
-
-    command_list = commands.strip().splitlines()
-    output = task.run(
-        netmiko_send_config,
-        config_commands=command_list
-    )
-
-	## DEBUG ##
-    print(f"This is the command list", command_list)
-    print("\n")
-    print(f"This is output from send config", output)
-    print("\n")
-    return True
 
 
 def continue_func(msg="Do you want to continue (y/n)? "):
@@ -214,6 +219,7 @@ def main():
         command_string="show run | section boot",
     )
     
+    print(f"This is the section boot: ",result)
    
     continue_func()
 
@@ -223,6 +229,8 @@ def main():
         command_string="write mem",
     )
     
+    print(f"Just wrote memory: ",result)
+
 
     # Reload
     continue_func(msg="Do you want to reload the device (y/n)? ")
